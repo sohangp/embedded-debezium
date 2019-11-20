@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+  # Install postgres and setup the student database.
+  postgres:
+    container_name: postgres
+    image: debezium/postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=studentdb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+
+  # Install Elasticsearch.
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.0
+    environment:
+    - discovery.type=single-node
+    ports:
+      - 9200:9200
+      - 9300:9300
