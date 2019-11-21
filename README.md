@@ -1,6 +1,6 @@
 # Change Data Capture (CDC) with Embedded Debezium and SpringBoot
 
-Blog URL:
+Blog URL: https://medium.com/@sohan_ganapathy/change-data-capture-cdc-with-embedded-debezium-and-springboot-6f10cd33d8ec
 
 ## Prerequisites
 - [Docker](https://docs.docker.com/v17.09/engine/installation/)
