@@ -9,37 +9,37 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 /**
- * Service interface that masks the caller from the implementation that fetches / acts on Student
- * related data.
+ * Service interface that masks the caller from the implementation that fetches
+ * / acts on Student related data.
  *
  * @author Sohan
  */
 @Service
 public class StudentService {
 
-    /**
-     * Handle to ElasticSearch
-     */
-    private final StudentRepository studentRepository;
+	/**
+	 * Handle to ElasticSearch
+	 */
+	private final StudentRepository studentRepository;
 
-    public StudentService(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
+	public StudentService(StudentRepository studentRepository) {
+		this.studentRepository = studentRepository;
+	}
 
-    /**
-     * Updates/Inserts/Delete student data.
-     *
-     * @param studentData
-     * @param operation
-     */
-    public void maintainReadModel(Map<String, Object> studentData, Operation operation) {
-        final ObjectMapper mapper = new ObjectMapper();
-        final Student student = mapper.convertValue(studentData, Student.class);
+	/**
+	 * Updates/Inserts/Delete student data.
+	 *
+	 * @param studentData
+	 * @param operation
+	 */
+	public void maintainReadModel(Map<String, Object> studentData, Operation operation) {
+		final ObjectMapper mapper = new ObjectMapper();
+		final Student student = mapper.convertValue(studentData, Student.class);
 
-        if (Operation.DELETE.equals(operation.code())) {
-            studentRepository.deleteById(student.getId());
-        } else {
-            studentRepository.save(student);
-        }
-    }
+		if (Operation.DELETE.name().equals(operation.name())) {
+			studentRepository.deleteById(student.getId());
+		} else {
+			studentRepository.save(student);
+		}
+	}
 }
