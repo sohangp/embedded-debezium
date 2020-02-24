@@ -29,7 +29,7 @@ CREATE TABLE public.student
 
 ## Starting the SpringBoot application
 
-The the folder `student-cdc-relay`, run the command
+Go to the folder `student-cdc-relay`, run the command
 
 ```shell
 mvn spring-boot:run
