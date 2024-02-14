@@ -4,13 +4,19 @@ services:
   # Install postgres and setup the student database.
   postgres:
     container_name: postgres
-    image: debezium/postgres
+    image: quay.io/debezium/example-postgres:${DEBEZIUM_VERSION}
     ports:
       - 5432:5432
+    healthcheck:
+      test: "pg_isready -U user -d studentdb"
+      interval: 2s
+      timeout: 20s
+      retries: 10
     environment:
       - POSTGRES_DB=studentdb
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
+      - PGPASSWORD=postgrespw      
 
   # Install Elasticsearch.
   elasticsearch:
