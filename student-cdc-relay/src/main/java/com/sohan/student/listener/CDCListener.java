@@ -4,6 +4,9 @@ import com.sohan.student.elasticsearch.service.StudentService;
 import com.sohan.student.utils.Operation;
 import io.debezium.config.Configuration;
 import io.debezium.embedded.EmbeddedEngine;
+import io.debezium.engine.ChangeEvent;
+import io.debezium.engine.DebeziumEngine;
+import io.debezium.engine.format.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.connect.data.Field;
@@ -15,10 +18,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static io.debezium.data.Envelope.FieldName.*;
 import static java.util.stream.Collectors.toMap;
+
+import java.io.IOException;
 
 /**
  * This class creates, starts and stops the EmbeddedEngine, which starts the Debezium engine. The engine also
@@ -41,7 +47,7 @@ public class CDCListener {
      * The Debezium engine which needs to be loaded with the configurations, Started and Stopped - for the
      * CDC to work.
      */
-    private final EmbeddedEngine engine;
+    private final DebeziumEngine<ChangeEvent<String, String>> engine;
 
     /**
      * Handle to the Service layer, which interacts with ElasticSearch.
@@ -54,12 +60,27 @@ public class CDCListener {
      *
      * @param studentConnector
      * @param studentService
+     * @throws IOException 
      */
-    private CDCListener(Configuration studentConnector, StudentService studentService) {
-        this.engine = EmbeddedEngine
-                .create()
-                .using(studentConnector)
-                .notifying(this::handleEvent).build();
+    private CDCListener(Configuration studentConnector, StudentService studentService) throws IOException {
+        // Create the engine with this configuration ...
+        try (DebeziumEngine<ChangeEvent<String, String>> engine = DebeziumEngine.create(Json.class)
+                .using(studentConnector.asProperties())
+                .notifying(record -> {
+                    System.out.println(record);
+                }).build()
+            ) {
+
+                this.engine = engine;
+
+                // Run the engine asynchronously ...
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(engine);
+
+                // Do something else or wait for a signal or an event
+              
+                // Engine is stopped when the main code is finished
+        }
 
         this.studentService = studentService;
     }
@@ -78,7 +99,12 @@ public class CDCListener {
     @PreDestroy
     private void stop() {
         if (this.engine != null) {
-            this.engine.stop();
+            try {
+                this.engine.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 

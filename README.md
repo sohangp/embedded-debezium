@@ -11,6 +11,8 @@ Blog URL: https://medium.com/@sohan_ganapathy/change-data-capture-cdc-with-embed
 Once the prerequisites are installed, run the command.
 
 ```shell
+export DEBEZIUM_VERSION=2.4
+export DEBEZIUM_CONNECTOR_VERSION=2.4.0.Alpha2
 docker-compose up -d
 ```
 

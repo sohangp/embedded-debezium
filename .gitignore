@@ -1,0 +1,4 @@
+.vscode/settings.json
+student-cdc-relay/.vscode/*
+student-cdc-relay/target/*
+student-cdc-relay/logs/*
